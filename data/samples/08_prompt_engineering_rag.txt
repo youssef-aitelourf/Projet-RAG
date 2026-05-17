@@ -1,0 +1,17 @@
+Prompt Engineering for RAG Generation
+
+The generator prompt strongly influences faithfulness and answer quality even when retrieval is perfect.
+
+Standard pattern: instruct the model to answer using ONLY the provided context, cite passage numbers when possible, and explicitly refuse or say "I don't know" when context is insufficient. This reduces hallucination.
+
+Context ordering: place the most relevant passages first; some models attend more to early context. Compression and reranking help prioritize signal.
+
+System vs user messages: a system message can enforce tone, language, and citation format; the user message carries question and concatenated passages.
+
+Temperature: use 0.0 for factual QA benchmarks; slightly higher (0.3) for HyDE hypothesis generation where diversity helps retrieval.
+
+Token limits: truncate or compress retrieved context to fit the model window. Contextual compression extracts only relevant sentences per chunk before generation.
+
+Multi-turn RAG: include conversation history in the query embedding or reformulate the follow-up into a standalone search query before retrieval.
+
+Anti-patterns: dumping too many chunks (lost-in-the-middle effect), no instruction to stay grounded, and retrieving without checking if the corpus contains the answer domain.

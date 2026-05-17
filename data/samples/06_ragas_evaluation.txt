@@ -1,0 +1,19 @@
+RAG Evaluation with RAGAS and LLM-as-Judge
+
+Evaluating RAG systems requires metrics for both retrieval and generation. Manual annotation is gold standard but expensive; automated frameworks scale experimentation.
+
+RAGAS (Retrieval Augmented Generation Assessment) provides reference-free metrics: faithfulness (is the answer grounded in retrieved context?), answer relevancy (does the answer address the question?), context precision (are retrieved passages useful?), and context recall (does context cover the reference answer?).
+
+Faithfulness detects hallucinations by checking whether each claim in the generated answer is supported by the retrieved passages. Low faithfulness means the model invented facts not present in context.
+
+Answer relevancy measures whether the response actually answers the user question, independent of factual correctness.
+
+Context precision is the fraction of retrieved chunks that contain useful information for the question. Low precision means noisy retrieval pollutes the prompt.
+
+ROUGE-L compares generated answers to reference answers using longest common subsequence overlap. It requires human-written reference answers in a ground-truth dataset.
+
+Retrieval metrics without generation: recall@k (fraction of questions where a relevant chunk appears in top-k) and MRR (mean reciprocal rank of the first relevant chunk). These require labeled relevant_chunk_ids per question.
+
+LLM-as-judge uses a separate model to score faithfulness and relevance on a 0-1 scale. Use a smaller cheaper model for evaluation to reduce benchmark cost. Cache judge scores to avoid redundant API calls.
+
+Benchmark hygiene: hold out documents not seen during prompt tuning; report latency and number of LLM calls per query; run each experiment on identical corpora and questions.

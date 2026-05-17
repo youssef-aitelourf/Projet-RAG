@@ -1,0 +1,15 @@
+Embedding Models for Retrieval
+
+Dense embeddings map text into high-dimensional vectors where semantic similarity corresponds to geometric proximity. RAG retrievers depend on embedding quality as much as on the vector database.
+
+Sentence-transformers provides open-source models such as all-MiniLM-L6-v2 (384 dimensions, fast, good baseline) and all-mpnet-base-v2 (768 dimensions, higher quality, slower). These models are trained with contrastive learning on sentence pairs and output L2-normalized vectors suitable for cosine similarity.
+
+OpenAI text-embedding-3-small and text-embedding-3-large are proprietary APIs with strong multilingual performance. They require network calls and API keys but avoid local GPU requirements.
+
+Cohere embed-v3 and Voyage AI offer competitive commercial embeddings with domain-tuned variants for finance, law, and code.
+
+Best practices: use the same embedding model at index and query time; normalize vectors when using cosine distance; avoid mixing models across collections; re-embed the entire corpus when upgrading models.
+
+Bi-encoders encode query and document independently (fast, scalable). Cross-encoders score query-document pairs jointly (accurate, slow) and are used for reranking after bi-encoder retrieval, not for initial index search.
+
+Evaluation: measure retrieval recall@k and MRR on a labeled question-chunk dataset before comparing generation quality.

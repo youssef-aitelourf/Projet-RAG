@@ -1,42 +1,110 @@
 [
   {
     "question": "What are the main components of a RAG system?",
-    "reference": "A RAG system consists of six main components: a document corpus (the external knowledge base), a chunking step that splits documents into passages, an embedding model that converts chunks to dense vectors, a vector store for similarity search, a retriever that finds the most relevant chunks given a query, and a generator (LLM) that produces the final answer conditioned on the retrieved context."
+    "reference": "A RAG system consists of six main components: a document corpus (the external knowledge base), a chunking step that splits documents into passages, an embedding model that converts chunks to dense vectors, a vector store for similarity search, a retriever that finds the most relevant chunks given a query, and a generator (LLM) that produces the final answer conditioned on the retrieved context.",
+    "relevant_sources": ["01_rag_theory.txt"],
+    "relevant_chunk_ids": ["01_rag_theory.txt__2", "01_rag_theory.txt__3", "01_rag_theory.txt__4", "01_rag_theory.txt__5"]
   },
   {
     "question": "What are the limitations of naive RAG and how do advanced methods address them?",
-    "reference": "Naive RAG fails when query and document vocabularies diverge (semantic mismatch), misses diverse angles with a single query, and passes noisy irrelevant chunks to the generator. HyDE bridges the vocabulary gap by embedding a hypothetical answer. RAG-Fusion improves coverage via multi-query retrieval and Reciprocal Rank Fusion. Reranking uses a cross-encoder to filter noisy candidates. Contextual compression removes irrelevant sentences before generation."
+    "reference": "Naive RAG fails when query and document vocabularies diverge (semantic mismatch), misses diverse angles with a single query, and passes noisy irrelevant chunks to the generator. HyDE bridges the vocabulary gap by embedding a hypothetical answer. RAG-Fusion improves coverage via multi-query retrieval and Reciprocal Rank Fusion. Reranking uses a cross-encoder to filter noisy candidates. Contextual compression removes irrelevant sentences before generation.",
+    "relevant_sources": ["01_rag_theory.txt"],
+    "relevant_chunk_ids": ["01_rag_theory.txt__6", "01_rag_theory.txt__7"]
   },
   {
     "question": "How does HyDE differ from standard RAG retrieval?",
-    "reference": "Standard RAG embeds the raw user question and retrieves similar documents. HyDE instead asks the LLM to generate a hypothetical answer to the question, embeds that hypothetical answer, and uses it to retrieve similar real documents. This bridges the vocabulary gap between question-style and answer-style text, improving retrieval for knowledge-dense queries."
+    "reference": "Standard RAG embeds the raw user question and retrieves similar documents. HyDE instead asks the LLM to generate a hypothetical answer to the question, embeds that hypothetical answer, and uses it to retrieve similar real documents. This bridges the vocabulary gap between question-style and answer-style text, improving retrieval for knowledge-dense queries.",
+    "relevant_sources": ["01_rag_theory.txt"],
+    "relevant_chunk_ids": ["01_rag_theory.txt__7"]
   },
   {
     "question": "What is Reciprocal Rank Fusion and how is it used in RAG-Fusion?",
-    "reference": "Reciprocal Rank Fusion (RRF) merges multiple ranked result lists by assigning each document a score of 1/(k + rank) where k is a smoothing constant (typically 60) and rank is the document's position in each list. Scores across all lists are summed and documents re-ranked. RAG-Fusion generates multiple alternative query phrasings, retrieves results for each, and applies RRF to produce a single fused ranking that captures diverse relevant passages."
+    "reference": "Reciprocal Rank Fusion (RRF) merges multiple ranked result lists by assigning each document a score of 1/(k + rank) where k is a smoothing constant (typically 60) and rank is the document's position in each list. Scores across all lists are summed and documents re-ranked. RAG-Fusion generates multiple alternative query phrasings, retrieves results for each, and applies RRF to produce a single fused ranking that captures diverse relevant passages.",
+    "relevant_sources": ["01_rag_theory.txt"],
+    "relevant_chunk_ids": ["01_rag_theory.txt__8"]
   },
   {
     "question": "How does a cross-encoder reranker improve retrieval quality compared to a bi-encoder?",
-    "reference": "A bi-encoder embeds the query and each document independently and compares them with cosine similarity, which is fast but misses fine-grained interactions. A cross-encoder takes the query and a document together as a single input and produces a joint relevance score, capturing subtle query-document interactions. This makes cross-encoders much more accurate but slower, so they are used in a second stage to rerank a smaller candidate set retrieved by the fast bi-encoder."
+    "reference": "A bi-encoder embeds the query and each document independently and compares them with cosine similarity, which is fast but misses fine-grained interactions. A cross-encoder takes the query and a document together as a single input and produces a joint relevance score, capturing subtle query-document interactions. This makes cross-encoders much more accurate but slower, so they are used in a second stage to rerank a smaller candidate set retrieved by the fast bi-encoder.",
+    "relevant_sources": ["01_rag_theory.txt", "05_embedding_models.txt"],
+    "relevant_chunk_ids": ["01_rag_theory.txt__9", "05_embedding_models.txt__3"]
   },
   {
     "question": "What is the difference between BERT and GPT architectures?",
-    "reference": "BERT uses an encoder-only transformer with bidirectional self-attention, trained with masked language modeling and next-sentence prediction. It processes the full context in both directions, making it powerful for classification and extraction tasks but unsuitable for generation. GPT uses a decoder-only transformer with causal (unidirectional) self-attention, trained with next-token prediction. Its autoregressive design enables text generation. Modern LLMs like LLaMA and Qwen use decoder-only architectures."
+    "reference": "BERT uses an encoder-only transformer with bidirectional self-attention, trained with masked language modeling and next-sentence prediction. It processes the full context in both directions, making it powerful for classification and extraction tasks but unsuitable for generation. GPT uses a decoder-only transformer with causal (unidirectional) self-attention, trained with next-token prediction. Its autoregressive design enables text generation. Modern LLMs like LLaMA and Qwen use decoder-only architectures.",
+    "relevant_sources": ["02_transformers.txt"],
+    "relevant_chunk_ids": ["02_transformers.txt__5", "02_transformers.txt__6"]
   },
   {
     "question": "How does self-attention work in transformers?",
-    "reference": "Self-attention allows each token to attend to all other tokens in the sequence. From the input, three matrices are computed: Query (Q), Key (K), and Value (V) via learned projections. The attention score is computed as softmax(QK^T / sqrt(d_k)) multiplied by V, producing a weighted sum of value vectors where weights reflect relevance between tokens. Transformers use multi-head attention, running h parallel attention heads with different projections to capture diverse relationship types."
+    "reference": "Self-attention allows each token to attend to all other tokens in the sequence. From the input, three matrices are computed: Query (Q), Key (K), and Value (V) via learned projections. The attention score is computed as softmax(QK^T / sqrt(d_k)) multiplied by V, producing a weighted sum of value vectors where weights reflect relevance between tokens. Transformers use multi-head attention, running h parallel attention heads with different projections to capture diverse relationship types.",
+    "relevant_sources": ["02_transformers.txt"],
+    "relevant_chunk_ids": ["02_transformers.txt__1", "02_transformers.txt__2", "02_transformers.txt__3"]
   },
   {
     "question": "What is HNSW and why is it preferred for approximate nearest neighbor search?",
-    "reference": "HNSW (Hierarchical Navigable Small World) is a graph-based approximate nearest neighbor algorithm that builds a layered graph. The top layer has sparse long-range connections and the bottom layer has dense local connections, similar to skip lists. Search starts at the top for coarse navigation and progressively narrows down. HNSW achieves excellent recall-speed tradeoffs, supports incremental insertion without index rebuilding, and is used by ChromaDB, Weaviate, and Qdrant."
+    "reference": "HNSW (Hierarchical Navigable Small World) is a graph-based approximate nearest neighbor algorithm that builds a layered graph. The top layer has sparse long-range connections and the bottom layer has dense local connections, similar to skip lists. Search starts at the top for coarse navigation and progressively narrows down. HNSW achieves excellent recall-speed tradeoffs, supports incremental insertion without index rebuilding, and is used by ChromaDB, Weaviate, and Qdrant.",
+    "relevant_sources": ["03_vector_databases.txt"],
+    "relevant_chunk_ids": ["03_vector_databases.txt__3", "03_vector_databases.txt__4"]
   },
   {
     "question": "What is the difference between cosine similarity and L2 distance in vector search?",
-    "reference": "Cosine similarity measures the angle between two vectors, making it scale-invariant and independent of vector magnitude. It is the standard metric for normalized sentence embeddings. L2 (Euclidean) distance measures the absolute geometric distance between vectors, sensitive to magnitude. For sentence embeddings produced by models like all-MiniLM-L6-v2, cosine similarity is preferred. Inner product (dot product) is efficient for unnormalized vectors when both magnitude and direction carry meaning."
+    "reference": "Cosine similarity measures the angle between two vectors, making it scale-invariant and independent of vector magnitude. It is the standard metric for normalized sentence embeddings. L2 (Euclidean) distance measures the absolute geometric distance between vectors, sensitive to magnitude. For sentence embeddings produced by models like all-MiniLM-L6-v2, cosine similarity is preferred. Inner product (dot product) is efficient for unnormalized vectors when both magnitude and direction carry meaning.",
+    "relevant_sources": ["03_vector_databases.txt"],
+    "relevant_chunk_ids": ["03_vector_databases.txt__9"]
   },
   {
     "question": "How does hybrid search combine dense and sparse retrieval?",
-    "reference": "Hybrid search combines dense vector search (semantic similarity via embeddings) with sparse keyword search (BM25 or TF-IDF). Dense retrieval finds semantically related content even with different wording, while sparse retrieval excels at exact keyword matches, named entities, and product codes. The two result lists are merged using Reciprocal Rank Fusion or linear score interpolation. This complements the weaknesses of each: dense misses exact terms, sparse misses paraphrases."
+    "reference": "Hybrid search combines dense vector search (semantic similarity via embeddings) with sparse keyword search (BM25 or TF-IDF). Dense retrieval finds semantically related content even with different wording, while sparse retrieval excels at exact keyword matches, named entities, and product codes. The two result lists are merged using Reciprocal Rank Fusion or linear score interpolation. This complements the weaknesses of each: dense misses exact terms, sparse misses paraphrases.",
+    "relevant_sources": ["03_vector_databases.txt"],
+    "relevant_chunk_ids": ["03_vector_databases.txt__10"]
+  },
+  {
+    "question": "What are the main document chunking strategies for RAG?",
+    "reference": "Main chunking strategies include fixed-size chunking, recursive character splitting, sentence-based chunking, and semantic chunking. Recursive splitting tries hierarchical separators until pieces fit a max size. Sentence chunking preserves sentence boundaries. Semantic chunking splits at embedding-detected topic boundaries. Chunk size and overlap are critical hyperparameters.",
+    "relevant_sources": ["04_chunking_strategies.txt"],
+    "relevant_chunk_ids": ["04_chunking_strategies.txt__0", "04_chunking_strategies.txt__1"]
+  },
+  {
+    "question": "What is the difference between bi-encoders and cross-encoders for retrieval?",
+    "reference": "Bi-encoders encode query and document independently for fast cosine similarity search at scale. Cross-encoders score query-document pairs jointly for higher accuracy but at greater computational cost, and are typically used to rerank a smaller candidate set after bi-encoder retrieval.",
+    "relevant_sources": ["05_embedding_models.txt"],
+    "relevant_chunk_ids": ["05_embedding_models.txt__3"]
+  },
+  {
+    "question": "What metrics does RAGAS provide for evaluating RAG systems?",
+    "reference": "RAGAS provides faithfulness, answer relevancy, context precision, and context recall. Faithfulness checks grounding in retrieved context. Answer relevancy measures whether the response addresses the question. Context precision measures usefulness of retrieved passages. Context recall measures coverage relative to a reference answer.",
+    "relevant_sources": ["06_ragas_evaluation.txt"],
+    "relevant_chunk_ids": ["06_ragas_evaluation.txt__1"]
+  },
+  {
+    "question": "What is Self-RAG and how does it differ from always retrieving?",
+    "reference": "Self-RAG trains the model to decide when to retrieve and to critique retrieved evidence and its own outputs using reflection tokens. Unlike naive RAG that always retrieves top-k chunks, Self-RAG can skip retrieval when parametric knowledge suffices, reducing latency and noise.",
+    "relevant_sources": ["07_self_rag.txt"],
+    "relevant_chunk_ids": ["07_self_rag.txt__0", "07_self_rag.txt__1"]
+  },
+  {
+    "question": "What are best practices for RAG prompt engineering to reduce hallucinations?",
+    "reference": "Instruct the model to answer using only provided context, refuse when context is insufficient, order relevant passages first, use temperature 0 for factual QA, and compress or truncate context to fit the window. Avoid dumping too many chunks and failing to require grounding.",
+    "relevant_sources": ["08_prompt_engineering_rag.txt"],
+    "relevant_chunk_ids": ["08_prompt_engineering_rag.txt__0", "08_prompt_engineering_rag.txt__2"]
+  },
+  {
+    "question": "What is parent-child chunking in retrieval systems?",
+    "reference": "Parent-child indexing stores small child chunks for precise similarity matching while mapping each child to a larger parent chunk passed to the LLM. Small chunks improve recall; large parents provide complete context for generation.",
+    "relevant_sources": ["03_vector_databases.txt"],
+    "relevant_chunk_ids": ["03_vector_databases.txt__11"]
+  },
+  {
+    "question": "What is FAISS and what are its main characteristics?",
+    "reference": "FAISS is a library by Meta AI for efficient similarity search supporting exact and approximate search with index types like IVF. It supports product quantization for compression and is widely used in research and production but requires manual management without built-in persistence or metadata filtering.",
+    "relevant_sources": ["03_vector_databases.txt"],
+    "relevant_chunk_ids": ["03_vector_databases.txt__2"]
+  },
+  {
+    "question": "What is contextual compression in advanced RAG pipelines?",
+    "reference": "Contextual compression extracts only the sentences from retrieved chunks that are relevant to the question before passing context to the generator, reducing noise in the context window compared to passing full chunks.",
+    "relevant_sources": ["01_rag_theory.txt", "08_prompt_engineering_rag.txt"],
+    "relevant_chunk_ids": ["01_rag_theory.txt__10", "08_prompt_engineering_rag.txt__2"]
   }
 ]

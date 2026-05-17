@@ -1,0 +1,15 @@
+Self-RAG and Adaptive Retrieval
+
+Self-RAG (Self-Reflective Retrieval-Augmented Generation) trains the language model to decide when retrieval is needed and to critique retrieved evidence and its own outputs using special reflection tokens.
+
+Unlike naive RAG which always retrieves top-k chunks, Self-RAG can skip retrieval for questions answerable from parametric knowledge, saving latency and reducing noise.
+
+Reflection tokens signal actions such as: retrieve, relevance score for a passage, support score for a generated sentence, and overall utility of the response. The model learns these behaviors during fine-tuning with reinforcement learning or supervised data.
+
+Adaptive RAG routes queries to different strategies based on complexity: simple factual questions may use single-hop retrieval; multi-hop questions trigger iterative retrieval or graph-based methods.
+
+Corrective RAG (CRAG) adds a retrieval evaluator that filters or web-searches when retrieved documents are judged irrelevant, reducing propagation of bad context to the generator.
+
+These methods address limitations of static pipelines where retrieval always runs regardless of query type or retrieval quality.
+
+Production consideration: Self-RAG requires model fine-tuning and is not available out-of-the-box with generic API models, but the design principles inform when to add retrieval gates in custom pipelines.
