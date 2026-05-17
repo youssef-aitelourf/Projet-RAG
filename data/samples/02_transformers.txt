@@ -1,0 +1,43 @@
+Transformer Architecture and Attention Mechanisms
+
+The Transformer architecture, introduced by Vaswani et al. in the landmark 2017 paper "Attention Is All You Need," has become the dominant paradigm in natural language processing and is the foundation of all modern large language models.
+
+Self-Attention Mechanism:
+
+The core innovation of transformers is the self-attention mechanism. Given a sequence of tokens represented as vectors, self-attention allows each token to attend to all other tokens in the sequence and aggregate information weighted by relevance. The mechanism computes three matrices from the input: Query (Q), Key (K), and Value (V), each derived from learned weight matrices.
+
+The attention score between two tokens is computed as the dot product of their query and key vectors, scaled by the square root of the key dimension to prevent vanishing gradients: Attention(Q, K, V) = softmax(QK^T / sqrt(d_k)) * V. This produces a weighted sum of value vectors, where the weights reflect how much each token should "attend" to every other token.
+
+Multi-Head Attention:
+
+Rather than applying a single attention function, transformers use multi-head attention, where the attention operation is performed h times in parallel with different learned projections. Each "head" can capture different types of relationships. The outputs of all heads are concatenated and projected back to the model dimension.
+
+Positional Encoding:
+
+Unlike recurrent networks, transformers process all tokens simultaneously and lack inherent order information. Positional encodings are added to token embeddings to inject sequence position. The original paper uses sinusoidal encodings based on sine and cosine functions of different frequencies. Modern models often use learned positional embeddings or Rotary Position Embeddings (RoPE).
+
+Encoder-Decoder vs. Decoder-Only Architecture:
+
+The original transformer has two stacks: an encoder that processes the input sequence and a decoder that generates the output. This design is suited for sequence-to-sequence tasks like translation.
+
+BERT (Bidirectional Encoder Representations from Transformers) uses only the encoder, trained with masked language modeling and next-sentence prediction. BERT processes the full context bidirectionally, making it powerful for classification and extractive tasks, but not suitable for generation.
+
+GPT (Generative Pre-trained Transformer) uses only the decoder with causal (unidirectional) attention, where each token can only attend to previous tokens. This auto-regressive design enables text generation.
+
+Modern large language models like LLaMA, Mistral, and Qwen use decoder-only architectures with architectural improvements: RoPE positional embeddings, Group Query Attention (GQA) for memory efficiency, SwiGLU activation functions, and RMSNorm instead of LayerNorm.
+
+Tokenization:
+
+Transformers operate on tokens, not raw characters or words. Byte Pair Encoding (BPE) and SentencePiece are common subword tokenization algorithms that balance vocabulary size with sequence length. A typical vocabulary has 32,000 to 128,000 tokens.
+
+Attention Complexity and Scaling:
+
+Standard self-attention has O(n^2) complexity in sequence length n, making it expensive for long contexts. Techniques like FlashAttention compute exact attention more efficiently using GPU memory hierarchy tricks, reducing memory from O(n^2) to O(n). Sliding window attention, as used in Mistral, restricts attention to a local window to scale to longer sequences.
+
+Pre-Training and Fine-Tuning:
+
+Transformer LLMs are pre-trained on massive corpora using next-token prediction. After pre-training, models can be fine-tuned for specific tasks or aligned with human preferences using Reinforcement Learning from Human Feedback (RLHF) or Direct Preference Optimization (DPO). Parameter-Efficient Fine-Tuning methods like LoRA (Low-Rank Adaptation) allow fine-tuning only a small subset of parameters, dramatically reducing compute requirements.
+
+Embedding Models:
+
+A special class of transformers is trained to produce dense sentence-level embeddings optimized for semantic similarity. Models like all-MiniLM-L6-v2 and all-mpnet-base-v2 (from sentence-transformers) and OpenAI's text-embedding-3-small are trained with contrastive objectives to map semantically similar texts close together in vector space. These embeddings are the backbone of retrieval systems in RAG pipelines.

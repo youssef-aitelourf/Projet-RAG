@@ -1,0 +1,47 @@
+Vector Databases and Approximate Nearest Neighbor Search
+
+Vector databases are specialized data stores designed for efficient similarity search over high-dimensional dense vectors. They are a critical component of modern RAG pipelines, semantic search systems, and recommendation engines.
+
+Why Traditional Databases Fall Short:
+
+Relational databases and key-value stores are not suited for semantic similarity queries. Finding the most similar vector to a query requires computing distances to every stored vector, which is O(n) and unacceptably slow at scale. Vector databases solve this through approximate nearest neighbor (ANN) algorithms that trade a small accuracy loss for orders-of-magnitude speedup.
+
+FAISS (Facebook AI Similarity Search):
+
+FAISS, developed by Meta AI, is a library for efficient similarity search. It supports exact and approximate search with multiple index types. The most commonly used is IVF (Inverted File Index), which partitions the vector space into Voronoi cells and searches only the cells closest to the query, reducing search scope drastically. FAISS also supports product quantization (PQ) for compression, enabling billion-scale indexes on a single machine. FAISS is widely used in research and production but requires manual management (no built-in persistence or metadata filtering).
+
+HNSW (Hierarchical Navigable Small World):
+
+HNSW is the most popular ANN algorithm in production systems. It builds a layered graph where each node connects to its approximate nearest neighbors. The graph has a hierarchy of layers: the top layer is sparse (long-range connections) and the bottom is dense (local connections), similar to skip lists. Search starts at the top layer and progressively narrows down. HNSW achieves excellent recall-speed tradeoffs and supports incremental insertion without rebuilding the index. ChromaDB, Weaviate, and Qdrant all use HNSW under the hood.
+
+ChromaDB:
+
+ChromaDB is an open-source, embedding-native vector database designed for ease of use in AI applications. It supports persistent storage, metadata filtering, and multiple distance metrics (cosine, L2, inner product). ChromaDB uses HNSW for ANN search and stores both embeddings and associated documents and metadata together. It can run in-memory for testing or persist to disk for production. ChromaDB's Python API is simple: create a collection, add documents with embeddings and metadata, then query with an embedding or text.
+
+Pinecone:
+
+Pinecone is a managed cloud vector database offering fully serverless operation with automatic scaling. It supports namespaces for multi-tenancy, metadata filtering at query time, and hybrid search (dense + sparse). Pinecone abstracts away infrastructure management but introduces network latency and cost per query.
+
+Weaviate:
+
+Weaviate is an open-source vector database with built-in ML model integrations and a GraphQL-based query language. It supports hybrid search combining BM25 sparse retrieval with dense vector search. Weaviate's schema-based design makes it well-suited for structured data with semantic search requirements.
+
+Qdrant:
+
+Qdrant is a high-performance open-source vector search engine written in Rust. It supports payload filtering, sparse vectors, multi-vector payloads, and quantization for memory efficiency. Qdrant is known for strong performance benchmarks and production-grade reliability.
+
+Distance Metrics:
+
+Vector databases support multiple distance metrics. Cosine similarity measures the angle between vectors, making it scale-invariant and ideal for normalized embeddings. Euclidean distance (L2) measures absolute geometric distance. Dot product (inner product) is efficient for unnormalized vectors when both magnitude and direction matter. For sentence embeddings, cosine similarity is the standard choice.
+
+Hybrid Search:
+
+Many production RAG systems combine dense vector search (semantic similarity) with sparse keyword search (BM25/TF-IDF). Dense search finds semantically related content even with different wording, while sparse search excels at exact keyword matches, product codes, and named entities. Hybrid search merges both result sets using Reciprocal Rank Fusion or linear interpolation of scores.
+
+Chunking Strategy and Its Impact on Retrieval:
+
+The quality of a vector database retrieval depends heavily on how documents are chunked. Fixed-size chunking is simple but may split mid-sentence. Recursive character splitting tries to split on natural boundaries (paragraphs, sentences) before resorting to character splits. Semantic chunking groups sentences by similarity. Parent-child chunking stores small child chunks for retrieval precision but augments them with their larger parent chunk for generation context.
+
+Indexing and Retrieval Latency:
+
+Building a vector index is an offline, one-time cost. For HNSW, construction time is O(n log n). Query latency depends on the index type and parameters: higher ef (efSearch parameter in HNSW) means better recall at the cost of slower search. For most applications, p99 query latency under 50ms is achievable at million-scale with properly tuned HNSW parameters.

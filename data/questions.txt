@@ -1,0 +1,13 @@
+# Benchmark questions for RAG experimentation
+# Lines starting with # are ignored
+
+What are the main components of a RAG system?
+What are the limitations of naive RAG and how do advanced methods address them?
+How does HyDE differ from standard RAG retrieval?
+What is Reciprocal Rank Fusion and how is it used in RAG-Fusion?
+How does a cross-encoder reranker improve retrieval quality compared to a bi-encoder?
+What is the difference between BERT and GPT architectures?
+How does self-attention work in transformers?
+What is HNSW and why is it preferred for approximate nearest neighbor search?
+What is the difference between cosine similarity and L2 distance in vector search?
+How does hybrid search combine dense and sparse retrieval?

@@ -1,0 +1,11 @@
+openai>=1.30
+chromadb>=0.5
+sentence-transformers>=3.0
+torch>=2.0
+rich>=13.0
+click>=8.0
+python-dotenv>=1.0
+pypdf>=4.0
+numpy>=1.26
+pandas>=2.0
+rank-bm25>=0.2.2

@@ -1,0 +1,42 @@
+[
+  {
+    "question": "What are the main components of a RAG system?",
+    "reference": "A RAG system consists of six main components: a document corpus (the external knowledge base), a chunking step that splits documents into passages, an embedding model that converts chunks to dense vectors, a vector store for similarity search, a retriever that finds the most relevant chunks given a query, and a generator (LLM) that produces the final answer conditioned on the retrieved context."
+  },
+  {
+    "question": "What are the limitations of naive RAG and how do advanced methods address them?",
+    "reference": "Naive RAG fails when query and document vocabularies diverge (semantic mismatch), misses diverse angles with a single query, and passes noisy irrelevant chunks to the generator. HyDE bridges the vocabulary gap by embedding a hypothetical answer. RAG-Fusion improves coverage via multi-query retrieval and Reciprocal Rank Fusion. Reranking uses a cross-encoder to filter noisy candidates. Contextual compression removes irrelevant sentences before generation."
+  },
+  {
+    "question": "How does HyDE differ from standard RAG retrieval?",
+    "reference": "Standard RAG embeds the raw user question and retrieves similar documents. HyDE instead asks the LLM to generate a hypothetical answer to the question, embeds that hypothetical answer, and uses it to retrieve similar real documents. This bridges the vocabulary gap between question-style and answer-style text, improving retrieval for knowledge-dense queries."
+  },
+  {
+    "question": "What is Reciprocal Rank Fusion and how is it used in RAG-Fusion?",
+    "reference": "Reciprocal Rank Fusion (RRF) merges multiple ranked result lists by assigning each document a score of 1/(k + rank) where k is a smoothing constant (typically 60) and rank is the document's position in each list. Scores across all lists are summed and documents re-ranked. RAG-Fusion generates multiple alternative query phrasings, retrieves results for each, and applies RRF to produce a single fused ranking that captures diverse relevant passages."
+  },
+  {
+    "question": "How does a cross-encoder reranker improve retrieval quality compared to a bi-encoder?",
+    "reference": "A bi-encoder embeds the query and each document independently and compares them with cosine similarity, which is fast but misses fine-grained interactions. A cross-encoder takes the query and a document together as a single input and produces a joint relevance score, capturing subtle query-document interactions. This makes cross-encoders much more accurate but slower, so they are used in a second stage to rerank a smaller candidate set retrieved by the fast bi-encoder."
+  },
+  {
+    "question": "What is the difference between BERT and GPT architectures?",
+    "reference": "BERT uses an encoder-only transformer with bidirectional self-attention, trained with masked language modeling and next-sentence prediction. It processes the full context in both directions, making it powerful for classification and extraction tasks but unsuitable for generation. GPT uses a decoder-only transformer with causal (unidirectional) self-attention, trained with next-token prediction. Its autoregressive design enables text generation. Modern LLMs like LLaMA and Qwen use decoder-only architectures."
+  },
+  {
+    "question": "How does self-attention work in transformers?",
+    "reference": "Self-attention allows each token to attend to all other tokens in the sequence. From the input, three matrices are computed: Query (Q), Key (K), and Value (V) via learned projections. The attention score is computed as softmax(QK^T / sqrt(d_k)) multiplied by V, producing a weighted sum of value vectors where weights reflect relevance between tokens. Transformers use multi-head attention, running h parallel attention heads with different projections to capture diverse relationship types."
+  },
+  {
+    "question": "What is HNSW and why is it preferred for approximate nearest neighbor search?",
+    "reference": "HNSW (Hierarchical Navigable Small World) is a graph-based approximate nearest neighbor algorithm that builds a layered graph. The top layer has sparse long-range connections and the bottom layer has dense local connections, similar to skip lists. Search starts at the top for coarse navigation and progressively narrows down. HNSW achieves excellent recall-speed tradeoffs, supports incremental insertion without index rebuilding, and is used by ChromaDB, Weaviate, and Qdrant."
+  },
+  {
+    "question": "What is the difference between cosine similarity and L2 distance in vector search?",
+    "reference": "Cosine similarity measures the angle between two vectors, making it scale-invariant and independent of vector magnitude. It is the standard metric for normalized sentence embeddings. L2 (Euclidean) distance measures the absolute geometric distance between vectors, sensitive to magnitude. For sentence embeddings produced by models like all-MiniLM-L6-v2, cosine similarity is preferred. Inner product (dot product) is efficient for unnormalized vectors when both magnitude and direction carry meaning."
+  },
+  {
+    "question": "How does hybrid search combine dense and sparse retrieval?",
+    "reference": "Hybrid search combines dense vector search (semantic similarity via embeddings) with sparse keyword search (BM25 or TF-IDF). Dense retrieval finds semantically related content even with different wording, while sparse retrieval excels at exact keyword matches, named entities, and product codes. The two result lists are merged using Reciprocal Rank Fusion or linear score interpolation. This complements the weaknesses of each: dense misses exact terms, sparse misses paraphrases."
+  }
+]

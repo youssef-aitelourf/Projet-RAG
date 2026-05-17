@@ -1,0 +1,50 @@
+Retrieval-Augmented Generation (RAG)
+
+Retrieval-Augmented Generation (RAG) is an AI framework that enhances language model outputs by grounding them in external, retrieved knowledge. Introduced by Lewis et al. in 2020, RAG combines two components: a retriever that fetches relevant documents from a corpus, and a generator (a language model) that produces an answer conditioned on those documents.
+
+The core motivation for RAG is to overcome the limitations of parametric knowledge in LLMs. Language models encode knowledge in their weights during training, but this knowledge is static, can be outdated, and may be hallucinated. RAG allows models to access a dynamic, authoritative knowledge base at inference time without retraining.
+
+Components of a RAG System:
+
+1. Document Corpus: The external knowledge base, typically a collection of text documents, PDFs, web pages, or database records.
+
+2. Chunking: Documents are split into smaller passages (chunks) before indexing. Common strategies include fixed-size chunking, recursive character splitting, and semantic chunking. Chunk size and overlap are critical hyperparameters: too small and chunks lack context, too large and they dilute relevance signals.
+
+3. Embedding Model: A model that converts text chunks into dense vector representations. Common choices include sentence-transformers models (all-MiniLM-L6-v2, all-mpnet-base-v2), OpenAI's text-embedding-ada-002, and Cohere's embed models.
+
+4. Vector Store: A database optimized for similarity search over dense vectors. Examples include FAISS (Facebook AI Similarity Search), ChromaDB, Pinecone, Weaviate, and Qdrant. These use approximate nearest neighbor (ANN) algorithms like HNSW for efficient retrieval.
+
+5. Retriever: Given a query, the retriever embeds it and searches the vector store for the most semantically similar chunks. The number of retrieved chunks (top-k) is a key parameter.
+
+6. Generator: The language model that receives the query and the retrieved context, then generates the final answer. The prompt typically instructs the model to answer based only on the provided context.
+
+Limitations of Naive RAG:
+
+Naive RAG has several known failure modes. First, if the query and the relevant document use different vocabulary (semantic mismatch), the embeddings may not be similar enough for retrieval. Second, single-query retrieval misses documents that are relevant from different angles. Third, the top-k retrieved chunks may contain noisy or irrelevant passages that mislead the generator. Fourth, long documents may need many chunks to cover all relevant information.
+
+Advanced RAG Techniques:
+
+To address these limitations, numerous advanced techniques have been proposed:
+
+- HyDE (Hypothetical Document Embeddings): Instead of embedding the raw query, the LLM generates a hypothetical answer, which is then embedded and used for retrieval. This bridges the vocabulary gap between questions and answer-style documents.
+
+- RAG-Fusion: Generates multiple alternative query phrasings, retrieves documents for each, then fuses the result lists using Reciprocal Rank Fusion (RRF). RRF assigns each document a score of 1/(k + rank) across all query results, where k is a smoothing constant (typically 60).
+
+- Reranking: A two-stage retrieval process where a fast bi-encoder retrieves many candidates, and a slower but more accurate cross-encoder reranks them. Cross-encoders like ms-marco-MiniLM-L-6-v2 score query-document pairs jointly, capturing fine-grained relevance.
+
+- Self-RAG: A framework where the LLM learns to generate special tokens to decide when to retrieve, how to critique retrieved passages, and whether its own output is well-supported by evidence.
+
+- Contextual Compression: Extracted relevant sentences from retrieved chunks rather than passing full chunks, reducing noise in the context window.
+
+- RAPTOR: Recursive Abstractive Processing for Tree-Organized Retrieval. Builds a hierarchical tree of document summaries at multiple granularities, enabling retrieval at both fine and coarse levels.
+
+Evaluation of RAG Systems:
+
+RAG evaluation involves both retrieval quality and generation quality. Key metrics include:
+
+- Context Precision: The fraction of retrieved documents that are actually relevant to the question.
+- Context Recall: The fraction of relevant documents in the corpus that were successfully retrieved.
+- Faithfulness: Whether the generated answer is grounded in the retrieved context, without hallucination.
+- Answer Relevance: Whether the generated answer directly addresses the question.
+
+The RAGAS framework provides automated LLM-based evaluation across these dimensions without requiring human annotations.
