@@ -20,12 +20,20 @@ class VectorStore:
         if not chunks:
             return
         embeddings = self._embedder.embed([c.text for c in chunks]).tolist()
-        self._col.add(
+        self._col.upsert(
             ids=[c.chunk_id for c in chunks],
             documents=[c.text for c in chunks],
             embeddings=embeddings,
             metadatas=[{"source": c.source} for c in chunks],
         )
+
+    def delete_by_source(self, source: str) -> int:
+        """Remove all chunks from a given source file. Returns count deleted."""
+        existing = self._col.get(where={"source": source})
+        ids = existing.get("ids") or []
+        if ids:
+            self._col.delete(ids=ids)
+        return len(ids)
 
     def search(self, query_embedding: np.ndarray, k: int) -> list[dict]:
         k = min(k, self._col.count())

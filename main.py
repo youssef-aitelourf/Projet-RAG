@@ -59,17 +59,21 @@ def cli():
 @click.argument("path")
 @click.option("--strategy", "-s", default="recursive",
               type=click.Choice(["fixed", "recursive", "sentence"]))
+@click.option("--fresh", is_flag=True, default=False, help="Reset collection before indexing")
 @click.option("--experiment", "-e", multiple=True, default=list(EXPERIMENTS.keys()),
               type=click.Choice(list(EXPERIMENTS.keys())))
-def index(path: str, strategy: str, experiment: tuple[str, ...]):
-    """Index documents from a file or directory."""
+def index(path: str, strategy: str, fresh: bool, experiment: tuple[str, ...]):
+    """Index documents from a file or directory (incremental by default)."""
     cfg = Config()
     p = Path(path)
     chunks = load_file(p, strategy=strategy) if p.is_file() else load_dir(p, strategy=strategy)
-    console.print(Panel(f"[green]{len(chunks)} chunks[/green] from [bold]{path}[/bold]"))
+    mode = "fresh" if fresh else "upsert"
+    console.print(Panel(
+        f"[green]{len(chunks)} chunks[/green] from [bold]{path}[/bold] ([dim]{mode}[/dim])"
+    ))
     for name in experiment:
         exp = EXPERIMENTS[name](cfg, collection=name)
-        exp.index(chunks)
+        exp.index(chunks, fresh=fresh)
         console.print(f"  [green]✓[/green] {name}")
 
 
@@ -125,7 +129,7 @@ def run_all(questions_file: str, path: str, strategy: str, output: str, gt: str)
     exps = []
     for name, cls in EXPERIMENTS.items():
         exp = cls(cfg, collection=name)
-        exp.index(chunks)
+        exp.index(chunks, fresh=True)
         console.print(f"  [green]✓[/green] {name} indexed")
         exps.append(exp)
 

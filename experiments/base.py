@@ -2,6 +2,7 @@ import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from src.chunker import Chunk
+from src.vectorstore import VectorStore
 
 
 @dataclass
@@ -16,7 +17,16 @@ class BaseRAG(ABC):
     name: str = "base"
 
     @abstractmethod
-    def index(self, chunks: list[Chunk]) -> None: ...
+    def index(self, chunks: list[Chunk], fresh: bool = False) -> None: ...
+
+    @staticmethod
+    def _prepare_vector_index(store: VectorStore, chunks: list[Chunk], fresh: bool) -> None:
+        if fresh:
+            store.reset()
+        else:
+            for src in {c.source for c in chunks}:
+                store.delete_by_source(src)
+        store.add(chunks)
 
     @abstractmethod
     def _run(self, question: str) -> RAGResult: ...

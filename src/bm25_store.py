@@ -1,5 +1,4 @@
 import pickle
-from collections import defaultdict
 from pathlib import Path
 
 from rank_bm25 import BM25Okapi
@@ -8,6 +7,11 @@ from src.chunker import Chunk
 
 
 class BM25Store:
+    """
+    Sparse BM25 index. Each add() rebuilds the full index from stored documents.
+    For incremental updates, existing docs from other sources are preserved.
+    """
+
     def __init__(self, index_path: str):
         self._path = Path(index_path)
         self._bm25: BM25Okapi | None = None
@@ -15,10 +19,22 @@ class BM25Store:
         if self._path.exists():
             self._load()
 
-    def add(self, chunks: list[Chunk]) -> None:
-        self._docs = [{"text": c.text, "source": c.source} for c in chunks]
-        tokenized = [c.text.lower().split() for c in chunks]
-        self._bm25 = BM25Okapi(tokenized)
+    def add(self, chunks: list[Chunk], *, fresh: bool = False) -> None:
+        if fresh:
+            self._docs = []
+        else:
+            sources = {c.source for c in chunks}
+            self._docs = [d for d in self._docs if d["source"] not in sources]
+
+        for c in chunks:
+            self._docs.append({
+                "text": c.text,
+                "source": c.source,
+                "chunk_id": c.chunk_id,
+            })
+
+        tokenized = [d["text"].lower().split() for d in self._docs]
+        self._bm25 = BM25Okapi(tokenized) if tokenized else None
         self._path.parent.mkdir(parents=True, exist_ok=True)
         with open(self._path, "wb") as f:
             pickle.dump({"bm25": self._bm25, "docs": self._docs}, f)
