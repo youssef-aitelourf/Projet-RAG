@@ -29,9 +29,8 @@ class HyDERAG(BaseRAG):
         self._embedder = Embedder(cfg)
         self._store = VectorStore(cfg, self._embedder, collection)
 
-    def index(self, chunks: list[Chunk]) -> None:
-        self._store.reset()
-        self._store.add(chunks)
+    def index(self, chunks: list[Chunk], fresh: bool = False) -> None:
+        self._prepare_vector_index(self._store, chunks, fresh)
 
     def _run(self, question: str) -> RAGResult:
         hypothesis = self._llm.ask(_HYPOTHESIS_PROMPT.format(question=question), temperature=0.3)

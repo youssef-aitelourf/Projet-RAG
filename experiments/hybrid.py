@@ -26,11 +26,9 @@ class HybridRAG(BaseRAG):
         self._dense = VectorStore(cfg, self._embedder, collection)
         self._sparse = BM25Store(f"./data/bm25/{collection}.pkl")
 
-    def index(self, chunks: list[Chunk]) -> None:
-        self._dense.reset()
-        self._sparse.reset()
-        self._dense.add(chunks)
-        self._sparse.add(chunks)
+    def index(self, chunks: list[Chunk], fresh: bool = False) -> None:
+        self._prepare_vector_index(self._dense, chunks, fresh)
+        self._sparse.add(chunks, fresh=fresh)
 
     def _run(self, question: str) -> RAGResult:
         q_emb = self._embedder.embed_one(question)

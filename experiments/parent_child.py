@@ -26,9 +26,18 @@ class ParentChildRAG(BaseRAG):
         self._child_store = VectorStore(cfg, self._embedder, collection + "_child")
         self._parent_map: dict[str, str] = {}  # child_id → parent text
 
-    def index(self, chunks: list[Chunk]) -> None:
-        self._child_store.reset()
-        self._parent_map = {}
+    def index(self, chunks: list[Chunk], fresh: bool = False) -> None:
+        if fresh:
+            self._child_store.reset()
+            self._parent_map = {}
+        else:
+            for src in {c.source for c in chunks}:
+                self._child_store.delete_by_source(src)
+            sources = {c.source for c in chunks}
+            self._parent_map = {
+                k: v for k, v in self._parent_map.items()
+                if not any(k.startswith(src) for src in sources)
+            }
         all_children: list[Chunk] = []
 
         for parent in chunks:
