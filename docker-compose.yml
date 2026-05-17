@@ -1,0 +1,41 @@
+services:
+  rag:
+    build: .
+    image: projet-rag:latest
+    env_file:
+      - .env
+    environment:
+      - RAG_PROVIDER=${RAG_PROVIDER:-anthropic}
+      - CHROMA_DIR=/app/data/chroma
+    volumes:
+      - ./data:/app/data
+      - ./results:/app/results
+      - hf_cache:/app/.cache/huggingface
+    working_dir: /app
+
+  # Interactive CLI shell
+  cli:
+    extends:
+      service: rag
+    stdin_open: true
+    tty: true
+    entrypoint: ["/bin/bash"]
+    command: []
+
+  # Streamlit UI on http://localhost:8501
+  streamlit:
+    extends:
+      service: rag
+    ports:
+      - "8501:8501"
+    command:
+      [
+        "streamlit",
+        "run",
+        "app/streamlit_app.py",
+        "--server.address=0.0.0.0",
+        "--server.port=8501",
+      ]
+
+volumes:
+  hf_cache:

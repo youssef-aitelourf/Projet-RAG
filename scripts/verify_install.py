@@ -10,6 +10,7 @@ MODULES = [
     "rank_bm25",
     "click",
     "openai",
+    "anthropic",
     "pandas",
     "numpy",
     "streamlit",

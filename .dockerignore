@@ -1,0 +1,13 @@
+.venv/
+__pycache__/
+*.pyc
+.git/
+.env
+data/chroma/
+data/bm25/*.pkl
+results/*.json
+results/.cache/
+.DS_Store
+.cursor/
+*.md
+!README.md
