@@ -9,6 +9,10 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    env:
+      # CI has no API keys — use local Ollama-compatible settings for import/index only
+      RAG_PROVIDER: ollama_local
+      OLLAMA_API_KEY: ci
     steps:
       - uses: actions/checkout@v4
 
@@ -17,8 +21,7 @@ jobs:
           python-version: "3.12"
 
       - name: Install dependencies
-        run: |
-          pip install -r requirements.txt
+        run: pip install -r requirements.txt
 
       - name: Verify imports
         run: python scripts/verify_install.py
@@ -32,16 +35,20 @@ jobs:
           print('ok')
           "
 
-      - name: Index smoke (no LLM)
+      - name: Index smoke (no LLM, no API key)
         run: |
           python -c "
           from src.config import Config
           from src.loader import load_dir
-          from experiments.naive import NaiveRAG
+          from src.embedder import Embedder
+          from src.vectorstore import VectorStore
+
           cfg = Config()
           chunks = load_dir('data/samples/')
-          exp = NaiveRAG(cfg, collection='ci_smoke')
-          exp.index(chunks, fresh=True)
-          assert exp._store.count() > 0
-          print('indexed', exp._store.count(), 'chunks')
+          store = VectorStore(cfg, Embedder(cfg), collection_name='ci_smoke')
+          store.reset()
+          store.add(chunks)
+          n = store.count()
+          assert n > 0, f'expected chunks, got {n}'
+          print('indexed', n, 'chunks')
           "
