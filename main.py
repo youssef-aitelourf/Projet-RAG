@@ -104,7 +104,7 @@ def bench(questions_file: str, experiment: tuple[str, ...], output: str, gt: str
     ]
     ground_truth = _load_ground_truth(gt)
     exps = [EXPERIMENTS[n](cfg, collection=n) for n in experiment]
-    llm = LLM(cfg)
+    llm = LLM(cfg, role="eval")
     run_benchmark(exps, questions, llm, output_path=output, ground_truth=ground_truth)
 
 
@@ -134,7 +134,7 @@ def run_all(questions_file: str, path: str, strategy: str, output: str, gt: str)
         if q.strip() and not q.startswith("#")
     ]
     ground_truth = _load_ground_truth(gt)
-    llm = LLM(cfg)
+    llm = LLM(cfg, role="eval")
     run_benchmark(exps, questions, llm, output_path=output, ground_truth=ground_truth)
 
 
