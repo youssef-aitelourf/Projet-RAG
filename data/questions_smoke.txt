@@ -1,0 +1,4 @@
+# Smoke benchmark (3 questions, no API cost for retrieval-only checks)
+What are the main components of a RAG system?
+How does hybrid search combine dense and sparse retrieval?
+What is HNSW and why is it preferred for approximate nearest neighbor search?

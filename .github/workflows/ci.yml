@@ -1,0 +1,47 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        run: |
+          pip install -r requirements.txt
+
+      - name: Verify imports
+        run: python scripts/verify_install.py
+
+      - name: Retrieval metrics unit check
+        run: |
+          python -c "
+          from evaluation.retrieval import recall_at_k, mrr
+          assert recall_at_k(['a','b'], ['a'], k=2) == 1.0
+          assert mrr(['x','a'], ['a']) == 0.5
+          print('ok')
+          "
+
+      - name: Index smoke (no LLM)
+        run: |
+          python -c "
+          from src.config import Config
+          from src.loader import load_dir
+          from experiments.naive import NaiveRAG
+          cfg = Config()
+          chunks = load_dir('data/samples/')
+          exp = NaiveRAG(cfg, collection='ci_smoke')
+          exp.index(chunks, fresh=True)
+          assert exp._store.count() > 0
+          print('indexed', exp._store.count(), 'chunks')
+          "
