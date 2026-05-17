@@ -26,7 +26,7 @@ class CompressionRAG(BaseRAG):
     Contextual Compression RAG:
     - extractive mode (default): sentence similarity via embeddings, no extra LLM calls
     - llm mode: LLM extracts relevant sentences per candidate chunk
-  """
+    """
     name = "compression_rag"
 
     def __init__(self, cfg: Config, collection: str = "compression"):
