@@ -1,7 +1,17 @@
 from rouge_score import rouge_scorer
 
-from src.llm import LLM
+from evaluation.judge_cache import JudgeCache
 from experiments.base import RAGResult
+from src.llm import LLM
+
+_cache: JudgeCache | None = None
+
+
+def _get_cache() -> JudgeCache:
+    global _cache
+    if _cache is None:
+        _cache = JudgeCache()
+    return _cache
 
 _FAITHFULNESS_PROMPT = """\
 Rate how well the answer is GROUNDED in the context on a scale from 0.0 to 1.0.
@@ -44,17 +54,28 @@ _scorer = rouge_scorer.RougeScorer(["rougeL"], use_stemmer=True)
 
 def faithfulness(llm: LLM, question: str, result: RAGResult) -> float:
     context = "\n\n".join(d["text"] for d in result.retrieved_docs)
+    payload = f"{context[:3000]}|{result.answer}"
+    cache = _get_cache()
+    if (cached := cache.get("faithfulness", question, payload)) is not None:
+        return cached
     raw = llm.ask(
         _FAITHFULNESS_PROMPT.format(
             context=context[:3000], question=question, answer=result.answer
         )
     )
-    return _parse_score(raw)
+    score = _parse_score(raw)
+    cache.set("faithfulness", question, payload, score)
+    return score
 
 
 def answer_relevance(llm: LLM, question: str, answer: str) -> float:
+    cache = _get_cache()
+    if (cached := cache.get("relevance", question, answer)) is not None:
+        return cached
     raw = llm.ask(_RELEVANCE_PROMPT.format(question=question, answer=answer))
-    return _parse_score(raw)
+    score = _parse_score(raw)
+    cache.set("relevance", question, answer, score)
+    return score
 
 
 def context_precision(llm: LLM, question: str, docs: list[dict]) -> float:

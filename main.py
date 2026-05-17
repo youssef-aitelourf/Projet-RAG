@@ -42,12 +42,12 @@ EXPERIMENTS: dict[str, type] = {
 }
 
 
-def _load_ground_truth(path: str = "./data/ground_truth.json") -> dict[str, str] | None:
+def _load_ground_truth(path: str = "./data/ground_truth.json") -> dict[str, dict] | None:
     p = Path(path)
     if not p.exists():
         return None
     items = json.loads(p.read_text())
-    return {item["question"]: item["reference"] for item in items}
+    return {item["question"]: item for item in items}
 
 
 @click.group()
