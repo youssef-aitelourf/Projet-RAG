@@ -1,0 +1,15 @@
+Document Chunking Strategies for RAG
+
+Chunking splits raw documents into passages before embedding and indexing. Poor chunking is a leading cause of retrieval failure in production RAG systems.
+
+Fixed-size chunking splits text every N characters or tokens with optional overlap. It is simple and fast but often cuts sentences mid-way, losing semantic coherence.
+
+Recursive character splitting tries separators in order (paragraph, newline, sentence, word) until pieces fit within a max size, then merges small adjacent pieces. This is the default in many frameworks including LangChain and balances context preservation with uniform chunk sizes.
+
+Sentence-based chunking groups full sentences up to a max token budget. It preserves sentence boundaries and works well when answers span one or two complete sentences.
+
+Semantic chunking uses embedding similarity between consecutive sentences to detect topic boundaries. Chunks start and end at semantic breakpoints rather than fixed lengths. It produces more coherent passages but costs extra embedding calls during indexing.
+
+Parent-child (small-to-big) indexing stores small child chunks for precise retrieval while mapping each child to a larger parent chunk passed to the LLM. Small chunks improve recall; large parents improve generation context.
+
+Hyperparameters: typical chunk sizes range from 256 to 1024 tokens with 10-20% overlap. Overlap reduces the risk that critical information sits on a chunk boundary. Always measure retrieval recall@k when tuning chunk size.

@@ -11,3 +11,11 @@ How does self-attention work in transformers?
 What is HNSW and why is it preferred for approximate nearest neighbor search?
 What is the difference between cosine similarity and L2 distance in vector search?
 How does hybrid search combine dense and sparse retrieval?
+What are the main document chunking strategies for RAG?
+What is the difference between bi-encoders and cross-encoders for retrieval?
+What metrics does RAGAS provide for evaluating RAG systems?
+What is Self-RAG and how does it differ from always retrieving?
+What are best practices for RAG prompt engineering to reduce hallucinations?
+What is parent-child chunking in retrieval systems?
+What is FAISS and what are its main characteristics?
+What is contextual compression in advanced RAG pipelines?
