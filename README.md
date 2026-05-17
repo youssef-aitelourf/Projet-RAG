@@ -1,6 +1,20 @@
 # Projet-RAG
 
+[![CI](https://github.com/youssef-aitelourf/Projet-RAG/actions/workflows/ci.yml/badge.svg)](https://github.com/youssef-aitelourf/Projet-RAG/actions/workflows/ci.yml)
+
 Laboratory to compare **7 RAG retrieval strategies** on the same corpus with shared embeddings, LLM, and benchmark metrics.
+
+**Repository:** https://github.com/youssef-aitelourf/Projet-RAG
+
+## What's new in v0.2
+
+- 8 corpus documents, 18 benchmark questions with retrieval labels (`relevant_chunk_ids`)
+- Retrieval metrics: **Recall@5**, **MRR** (no LLM required)
+- Multi-provider LLM: Ollama Cloud, Ollama local, OpenAI
+- Incremental indexing (`index` upserts by default; `--fresh` to reset)
+- Streamlit demo UI
+- Fast **extractive** compression mode (default)
+- CI: import check + index smoke test
 
 ## Setup
 
@@ -35,8 +49,11 @@ python main.py index data/samples/ --fresh -e naive
 # Single question
 python main.py ask "How does HyDE work?" -e hyde
 
-# Benchmark (index first)
+# Benchmark (index first; uses EVAL_MODEL for judge metrics if set)
 python main.py bench data/questions.txt -o results/benchmark.json
+
+# Quick smoke (3 questions)
+python main.py bench data/questions_smoke.txt -e naive -e hybrid -o results/smoke.json
 
 # Index all experiments + full benchmark
 python main.py run-all data/questions.txt data/samples/
