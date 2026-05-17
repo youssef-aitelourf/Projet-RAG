@@ -12,6 +12,7 @@ MODULES = [
     "openai",
     "pandas",
     "numpy",
+    "streamlit",
 ]
 
 
